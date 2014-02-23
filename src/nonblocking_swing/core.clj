@@ -4,8 +4,17 @@
 (import javax.swing.JButton)
 (import java.awt.GridLayout)
 (import '(java.awt.event ActionListener ActionEvent))
+(import '(java.lang Runnable Thread))
+(import javax.swing.SwingUtilities)
 
 (def frame (JFrame. "Frame"))
+
+(defn create-runnable
+  []
+  (proxy [Runnable] []
+    (run []
+         (Thread/sleep 5000)
+         (println "i am a long running task in a different thread"))))
 
 (defn create-long-running-task-button
   []
@@ -14,7 +23,7 @@
        button
        (proxy [ActionListener] []
          (actionPerformed [event]
-                          (Thread/sleep 5000))))
+                          (.start (Thread. (create-runnable))))))
     button))
 
 (defn add-buttons
