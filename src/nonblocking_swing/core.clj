@@ -1,45 +1,44 @@
-(ns nonblocking-swing.core)
+(ns nonblocking-swing.core
+  (:require [nonblocking-swing.button :as button]
+            [nonblocking-swing.runnables :as runnables]
+            [nonblocking-swing.components :as component]))
 
-(import javax.swing.JFrame)
-(import javax.swing.JButton)
+(import '(javax.swing JFrame JButton JTextField SwingUtilities))
 (import java.awt.GridLayout)
 (import '(java.awt.event ActionListener ActionEvent))
 (import '(java.lang Runnable Thread))
-(import javax.swing.SwingUtilities)
 
-(def frame (JFrame. "Frame"))
+(component/create
+ {:main-frame (JFrame. "Main Frame")})
 
-(defn create-runnable
+(component/create
+ {:long-running-task-button
+   (button/create-async
+            {:title "LongRunningTask"
+             :listener (fn []
+                         (Thread/sleep 5000)
+                         (println "I am a long running task in a different thread")
+                         (component/update
+                          (.setText (component/by-id :text-field) "FromButton")))})})
+
+(component/create
+ {:always-clickable
+ (JButton. "AlwaysClickable")})
+
+(component/create
+ {:text-field (JTextField. "Hello World")})
+
+(defn create-ui
+  "Creates an interface from components"
   []
-  (proxy [Runnable] []
-    (run []
-         (Thread/sleep 5000)
-         (println "i am a long running task in a different thread"))))
+  (let [frame (component/by-id :main-frame)]
+    (.setLayout frame (GridLayout. 3 1))
+    (.add frame (component/by-id :long-running-task-button))
+    (.add frame (component/by-id :always-clickable))
+    (.add frame (component/by-id :text-field))
+    (.setSize frame 300 300)
+    (.setVisible frame true)))
 
-(defn create-long-running-task-button
-  []
-  (let [button (JButton. "LongRunningTask")]
-    (.addActionListener
-       button
-       (proxy [ActionListener] []
-         (actionPerformed [event]
-                          (.start (Thread. (create-runnable))))))
-    button))
-
-(defn add-buttons
-  []
-  (let [layout (GridLayout. 3 1)]
-    (.setLayout frame layout)
-    (.add frame (create-long-running-task-button))
-    (.add frame (JButton. "Always Clickable"))))
-
-(defn create-frame
-  []
-  (.setSize frame 300 300)
-  (.setVisible frame true)
-  (add-buttons))
-
-
-(create-frame)
+(create-ui)
 
 
