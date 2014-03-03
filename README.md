@@ -1,13 +1,12 @@
 # nonblocking-swing
 
-A Clojure library designed to ... well, that part is up to you.
+Never lock up the UI when you are running long running tasks. This example is for Swing.
 
 ## Usage
 
-FIXME
 
 ## License
 
-Copyright © 2014 FIXME
+Copyright © Piyush Srivastava
 
 Distributed under the Eclipse Public License, the same as Clojure.
