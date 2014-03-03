@@ -3,41 +3,50 @@
             [nonblocking-swing.runnables :as runnables]
             [nonblocking-swing.components :as component]))
 
-(import '(javax.swing JFrame JButton JTextField SwingUtilities))
-(import java.awt.GridLayout)
+(import '(javax.swing JFrame JButton JTextField SwingUtilities JPanel ImageIcon))
+(import '(java.awt GridLayout Color Dimension))
 (import '(java.awt.event ActionListener ActionEvent))
 (import '(java.lang Runnable Thread))
 
 (component/create
- {:main-frame (JFrame. "Main Frame")})
+ (let [frame (JFrame. "MainFrame")]
+   (.setSize frame 300 300)
+   {:main-frame frame}))
 
-(component/create
- {:long-running-task-button
-   (button/create-async
-            {:title "LongRunningTask"
-             :listener (fn []
-                         (Thread/sleep 5000)
-                         (println "I am a long running task in a different thread")
-                         (component/update
-                          (.setText (component/by-id :text-field) "FromButton")))})})
+(component/create (let [image
+                        (.getImage
+                         (ImageIcon. "images/clojure.jpg"))]
+                    {:image image}))
 
-(component/create
- {:always-clickable
- (JButton. "AlwaysClickable")})
+(component/create {:long-running-task-button
+                   (button/create-async
+                    {:title "LongRunningTask"
+                     :listener (fn []
+                                 (Thread/sleep 5000)
+                                 (let [main-frame (component/by-id :main-frame)
+                                       image (component/by-id :image)
+                                       image-panel (proxy [JPanel] []
+                                                     (paintComponent
+                                                      [graphic]
+                                                      (.drawImage graphic image 0 0 nil)))]
+                                   (component/update
+                                    (doto main-frame
+                                      (.setSize (Dimension. (.getWidth image nil) (.getHeight image nil)))
+                                      (.add image-panel)))))})})
 
-(component/create
- {:text-field (JTextField. "Hello World")})
+(component/create {:always-clickable
+                   (JButton. "AlwaysClickable")})
+
+(component/create {:text-field (JTextField. "Hello World")})
 
 (defn create-ui
   "Creates an interface from components"
   []
-  (let [frame (component/by-id :main-frame)]
-    (.setLayout frame (GridLayout. 3 1))
-    (.add frame (component/by-id :long-running-task-button))
-    (.add frame (component/by-id :always-clickable))
-    (.add frame (component/by-id :text-field))
-    (.setSize frame 300 300)
-    (.setVisible frame true)))
+  (doto (component/by-id :main-frame)
+    (.setLayout (GridLayout. 3 1))
+    (.add (component/by-id :long-running-task-button))
+    (.add (component/by-id :always-clickable))
+    (.setVisible true)))
 
 (create-ui)
 
