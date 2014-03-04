@@ -10,7 +10,7 @@
 
 (component/create
  (let [frame (JFrame. "MainFrame")]
-   (.setSize frame 500 00)
+   (.setSize frame 500 500)
    {:main-frame frame}))
 
 (defn create-image
@@ -35,9 +35,10 @@
                                                       [graphic]
                                                       (.drawImage graphic image 0 0 nil)))]
                                    (component/update
+                                    (.setPreferredSize image-panel (Dimension. 400 100))
                                     (doto main-frame
-                                      (.setSize (Dimension. (.getWidth image nil) (.getHeight image nil)))
-                                      (.add image-panel)))))})})
+                                      (.add image-panel)
+                                      (.pack )))))})})
 
 (component/create {:load-grayscale-image
                    (button/create-async
@@ -51,9 +52,10 @@
                                                       [graphic]
                                                       (.drawImage graphic image 0 0 nil)))]
                                    (component/update
+                                    (.setPreferredSize image-panel (Dimension. 400 100))
                                     (doto main-frame
-                                      (.setSize (Dimension. (.getWidth image nil) (.getHeight image nil)))
-                                      (.add image-panel)))))})})
+                                      (.add image-panel)
+                                      (.pack )))))})})
 
 
 (defn create-ui
