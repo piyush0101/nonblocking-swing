@@ -34,19 +34,30 @@
                                                      (paintComponent
                                                       [graphic]
                                                       (.drawImage graphic image 0 0 nil)))]
+                                   ))})})
+
+(component/create {:load-grayscale-image
+                   (button/create-async
+                    {:title "Load Grayscale Image"
+                     :listener (fn []
+                                 (Thread/sleep 5000)
+                                 (let [main-frame (component/by-id :main-frame)
+                                       image (component/by-id :image-grayscale)
+                                       image-panel (proxy [JPanel] []
+                                                     (paintComponent
+                                                      [graphic]
+                                                      (.drawImage graphic image 0 0 nil)))]
                                    (component/update
                                     (doto main-frame
                                       (.setSize (Dimension. (.getWidth image nil) (.getHeight image nil)))
                                       (.add image-panel)))))})})
 
-(component/create {:load-grayscale-image
-                   (JButton. "Load Grayscale Image")})
 
 (defn create-ui
   "Creates an interface from components"
   []
   (doto (component/by-id :main-frame)
-    (.setLayout (GridLayout. 3 1))
+    (.setLayout (GridLayout. 4 1))
     (.add (component/by-id :load-colored-image))
     (.add (component/by-id :load-grayscale-image))
     (.setVisible true)))
