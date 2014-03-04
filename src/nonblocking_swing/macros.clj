@@ -4,7 +4,12 @@
 (import java.lang.Thread)
 
 (defmacro runnable
-  [body]
-  `(proxy [Runnable] []
-    (run []
-         ~body)))
+  [body & args]
+  (if (= (first body) 'fn)
+    `(proxy [Runnable] []
+       (run []
+            (apply ~body '~args)))
+    `(proxy [Runnable] []
+       (run []
+            ~body))))
+
