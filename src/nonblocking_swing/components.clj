@@ -16,6 +16,8 @@
 (defn update
   [body]
   (SwingUtilities/invokeLater
-   (runnables/create-runnable body)))
+   (proxy [Runnable] []
+     (run []
+          body))))
 
 

@@ -11,6 +11,9 @@
           (proxy [ActionListener] []
            (actionPerformed [event]
                         (.start
-                         (Thread. (runnables/create-runnable (args :listener))))))]
+                         (Thread.
+                          (proxy [Runnable] []
+                                    (run []
+                                         (apply (args :listener) [])))))))]
     (.addActionListener button listener)
       button)))
