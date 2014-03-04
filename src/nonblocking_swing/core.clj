@@ -13,14 +13,19 @@
    (.setSize frame 300 300)
    {:main-frame frame}))
 
-(component/create (let [image
-                        (.getImage
-                         (ImageIcon. "images/clojure.jpg"))]
-                    {:image image}))
+(defn create-image
+  [id path]
+  (let [image
+        (.getImage
+         (ImageIcon. path))]
+    (component/create {id image})))
 
-(component/create {:long-running-task-button
+(create-image :image "images/clojure.jpg")
+(create-image :image-grayscale "images/clojure-grayscale.png")
+
+(component/create {:load-colored-image
                    (button/create-async
-                    {:title "LongRunningTask"
+                    {:title "Load Colored Image"
                      :listener (fn []
                                  (Thread/sleep 5000)
                                  (let [main-frame (component/by-id :main-frame)
@@ -34,18 +39,16 @@
                                       (.setSize (Dimension. (.getWidth image nil) (.getHeight image nil)))
                                       (.add image-panel)))))})})
 
-(component/create {:always-clickable
-                   (JButton. "AlwaysClickable")})
-
-(component/create {:text-field (JTextField. "Hello World")})
+(component/create {:load-grayscale-image
+                   (JButton. "Load Grayscale Image")})
 
 (defn create-ui
   "Creates an interface from components"
   []
   (doto (component/by-id :main-frame)
     (.setLayout (GridLayout. 3 1))
-    (.add (component/by-id :long-running-task-button))
-    (.add (component/by-id :always-clickable))
+    (.add (component/by-id :load-colored-image))
+    (.add (component/by-id :load-grayscale-image))
     (.setVisible true)))
 
 (create-ui)
