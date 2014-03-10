@@ -13,6 +13,21 @@
    (.setSize frame 500 500)
    {:main-frame frame}))
 
+(defn create-image-panel
+  [image-id]
+  (fn []
+    (Thread/sleep 5000)
+    (let [main-frame (component/by-id :main-frame)
+          image (component/by-id image-id)
+          image-panel (proxy [JPanel] []
+                        (paintComponent
+                         [graphic]
+                         (.drawImage graphic image 0 0 nil)))]
+      (component/update
+       (fn []
+         (.setPreferredSize image-panel (Dimension. 400 100))
+         (doto main-frame (.add image-panel) (.pack)))))))
+
 (defn create-image
   [id path]
   (let [image
@@ -26,37 +41,12 @@
 (component/create {:load-colored-image
                    (button/create-async
                     {:title "Load Colored Image"
-                     :listener (fn []
-                                 (Thread/sleep 5000)
-                                 (let [main-frame (component/by-id :main-frame)
-                                       image (component/by-id :image)
-                                       image-panel (proxy [JPanel] []
-                                                     (paintComponent
-                                                      [graphic]
-                                                      (.drawImage graphic image 0 0 nil)))]
-                                   (component/update
-                                    (.setPreferredSize image-panel (Dimension. 400 100))
-                                    (doto main-frame
-                                      (.add image-panel)
-                                      (.pack )))))})})
+                     :listener (create-image-panel :image)})})
 
 (component/create {:load-grayscale-image
                    (button/create-async
                     {:title "Load Grayscale Image"
-                     :listener (fn []
-                                 (Thread/sleep 5000)
-                                 (let [main-frame (component/by-id :main-frame)
-                                       image (component/by-id :image-grayscale)
-                                       image-panel (proxy [JPanel] []
-                                                     (paintComponent
-                                                      [graphic]
-                                                      (.drawImage graphic image 0 0 nil)))]
-                                   (component/update
-                                    (.setPreferredSize image-panel (Dimension. 400 100))
-                                    (doto main-frame
-                                      (.add image-panel)
-                                      (.pack )))))})})
-
+                     :listener (create-image-panel :image-grayscale)})})
 
 (defn create-ui
   "Creates an interface from components"
@@ -68,5 +58,4 @@
     (.setVisible true)))
 
 (create-ui)
-
 

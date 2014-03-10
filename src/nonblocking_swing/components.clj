@@ -18,6 +18,6 @@
   (SwingUtilities/invokeLater
    (proxy [Runnable] []
      (run []
-          body))))
+          (apply body [])))))
 
 

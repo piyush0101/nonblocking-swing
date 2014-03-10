@@ -14,6 +14,7 @@
                          (Thread.
                           (proxy [Runnable] []
                                     (run []
+                                         (println (args :listener))
                                          (apply (args :listener) [])))))))]
     (.addActionListener button listener)
       button)))
