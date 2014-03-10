@@ -2,8 +2,7 @@
 
 Never lock up the UI when you are running long running tasks. This example is for Swing.
 
-## Usage
-
+http://piyush0101.github.io/2014/03/04/never-block-the-ui/
 
 ## License
 
